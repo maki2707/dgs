@@ -16,16 +16,16 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ visible, onCancel, publisher 
   const deletePublisher = useDeletePublisher();
   const queryClient = useQueryClient();
 
-  const onConfirm = () => {
+  const onConfirm = async () => {
     if (publisher) {
-      
-      deletePublisher.mutate(publisher.idProizvodac, {
-        onSuccess: async () => {
-          await queryClient.invalidateQueries('publishersData');
-          toast.success("Brisanje uspješno!")
-         
-        }
-      });
+      try {
+        await deletePublisher.mutateAsync(publisher.idProizvodac);
+        await queryClient.invalidateQueries('publishersData');
+        toast.success('Brisanje proizvođača uspješno!');
+        onCancel();
+      } catch (error) {
+        toast.error('Došlo je do pogreške prilikom brisanja proizvođača.');
+      }
     }
   };
 
@@ -36,13 +36,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ visible, onCancel, publisher 
         title={`Jeste li sigurni da želite obrisati proizvođača - "${publisher?.nazivProizvodac}"?`}
         onCancel={onCancel}
         okText="Obriši"
-        okType='danger'
-        onOk={onConfirm} // Pass the function reference to onOk prop
+        okType="danger"
+        onOk={onConfirm}
         cancelText="Odustani"
       >
         <p>Želite li nastaviti?</p>
       </Modal>
-    <ToastContainer/>
+      <ToastContainer />
     </>
   );
 };

@@ -6,7 +6,7 @@ export const useDeletePublisher = () => {
   const axios = useAxios();
 
   const deletePublisher = async (id: number) => {
-    return await axios.delete(`/deletePublisher/${id}`);
+    return await axios.delete(`/proizvodac/delete/${id}`);
   };
 
   return useMutation(deletePublisher, {

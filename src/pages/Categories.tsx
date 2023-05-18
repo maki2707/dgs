@@ -1,34 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Space, Table, Tag, Button, Input } from 'antd';
-import { ColumnsType, TableProps } from 'antd/lib/table';
+import React, { useContext, useState } from 'react';
+import { Table,Button, Input } from 'antd';
+import { TableProps } from 'antd/lib/table';
 import { CategoryContext } from '../context/categoryContext';
-import useGetCategories, { categoriesList } from "../hooks/Category/useGetCategories";
 import { useNavigate } from 'react-router-dom';
 import AddCategoryModal from '../components/modals/Category/AddCategoryModal';
 import { Kategorija } from '../types/Category';
+import { categoryColumns } from './columns/CategoryColumns';
+import useGetCategories from '../hooks/Category/useGetCategories';
 
-const columns: ColumnsType<Kategorija> = [
-  {
-    title: <span className='categoriesTable-title'>Naziv kategorije</span>,
-    dataIndex: 'nazivKategorije',
-    key: 'nazivKategorije',
-    defaultSortOrder: 'ascend',
-    sorter: (a, b) => a.nazivKategorije.localeCompare(b.nazivKategorije),
-  },
-  {
-    title: <span className='categoriesTable-title'>Opis kategorije</span>,
-    dataIndex: 'opisKategorije',
-    key: 'opisKategorije',
-  },
-  {
-    title: <span className='categoriesTable-title'>Administrator</span>,
-    dataIndex: 'admin',
-    key: 'admin',
-  },
-];
 
 const Categories: React.FC = () => {
-    const { categoryIndex, setCategoryIndex } = useContext(CategoryContext);
+    const { category, setCategory} = useContext(CategoryContext);
     const [searchText, setSearchText] = useState<string>('');
     const [modalVisible, setModalVisible] = useState(false);
     const {data, isLoading} = useGetCategories()
@@ -37,15 +19,14 @@ const Categories: React.FC = () => {
     };
     const navigate = useNavigate();
     
-    const filteredCategories = categoriesList.filter((category) => {
+    const filteredCategories = data?.filter((category: Kategorija) => {
         return category.nazivKategorije.toLowerCase().includes(searchText.toLowerCase());
     });
     
-    const handleClickRow = (record: Kategorija, index: number ) => {
-        setCategoryIndex({category: record.nazivKategorije, index: index})
+    const handleClickRow = (record: Kategorija, index: number) => {
+        setCategory(record);
         navigate(`/${record.nazivKategorije}`);
-        
-    };
+      };
     
     const rowProps: TableProps<Kategorija>['onRow'] = (record, index) => {
         return {
@@ -69,7 +50,7 @@ const Categories: React.FC = () => {
                 </Button>
             </div>
             <Table
-                columns={columns} 
+                columns={categoryColumns} 
                 dataSource={data} 
                 className='categoriesTable' 
                 rowClassName='categoriesTable-row' 

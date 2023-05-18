@@ -5,7 +5,7 @@ export const useDeleteCategory = () => {
   const axios = useAxios();
 
   const deleteCategory = async (id: number) => {
-    return await axios.delete(`/deleteCategory/${id}`);
+    return await axios.delete(`/kategorija/delete/${id}`);
   };
 
   return useMutation(deleteCategory, {
