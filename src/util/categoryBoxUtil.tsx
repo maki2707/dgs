@@ -1,10 +1,11 @@
 import { Kategorija } from "../types/Category";
-
+import { Admin } from "../types/Admin";
 export const handlePrevClick = (
   data: Kategorija[],
   currentIndex: number,
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>,
-  setCategory: React.Dispatch<React.SetStateAction<Kategorija>>
+  setCategory: React.Dispatch<React.SetStateAction<Kategorija>>,
+
 ) => {
   const prevIndex = currentIndex === 0 ? data.length - 1 : currentIndex - 1;
   setCurrentIndex(prevIndex);
@@ -15,11 +16,13 @@ export const handleNextClick = (
   data: Kategorija[],
   currentIndex: number,
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>,
-  setCategory: React.Dispatch<React.SetStateAction<Kategorija>>
+  setCategory: React.Dispatch<React.SetStateAction<Kategorija>>,
+
 ) => {
   const nextIndex = currentIndex === data.length - 1 ? 0 : currentIndex + 1;
   setCurrentIndex(nextIndex);
   setCategory(data[nextIndex]);
+  
 };
 
 

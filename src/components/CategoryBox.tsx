@@ -7,10 +7,13 @@ import { handlePrevClick, handleNextClick, handleCategoryClick, handleSearch } f
 import { Kategorija } from "../types/Category";
 import DeleteCategoryModal from "./modals/Category/DeleteCategoryModal";
 import useGetCategories from "../hooks/Category/useGetCategories";
+import { useGetAdmins } from "../hooks/Admin/useGetAdmins";
+import { Admin } from "../types/Admin";
 
 const CategoryBox: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const { data, isLoading } = useGetCategories();
+  const { data: admins, isLoading: isAdminLoading } = useGetAdmins();
+  const { data: categories, isLoading: isCategoryLoading } = useGetCategories();
   const { category, setCategory } = useContext(CategoryContext);
   const [editing, setEditing] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>(category.nazivKategorije);
@@ -47,8 +50,9 @@ const CategoryBox: React.FC = () => {
 
   const adminMenu = (
     <Menu onClick={(e) => handleAdminSelect(e.key as string)}>
-      <Menu.Item key="admin1">Admin 1</Menu.Item>
-      <Menu.Item key="admin2">Admin 2</Menu.Item>
+      {admins?.map((admin: Admin) => (
+        <Menu.Item key={admin.idKorisnik.toString()}>{admin.korisnickoIme}</Menu.Item>
+      ))}
     </Menu>
   );
 
@@ -59,7 +63,7 @@ const CategoryBox: React.FC = () => {
         shape="circle"
         icon={<LeftCircleOutlined />}
         style={{ backgroundColor: "#1F51FF" }}
-        onClick={() => handlePrevClick(data, currentIndex, setCurrentIndex, setCategory)}
+        onClick={() => handlePrevClick(categories, currentIndex, setCurrentIndex, setCategory, )}
         disabled={editing}
       />
 
@@ -81,8 +85,8 @@ const CategoryBox: React.FC = () => {
               style={{ marginBottom: "1rem" }}
             />
             <Dropdown overlay={adminMenu} trigger={['click']} overlayStyle={{backgroundColor: 'blue'}}>
-              <Button type="link" style={{ marginTop: "0.5rem", marginRight: "1rem" }}>
-                Admin: {admin}<DownOutlined />
+              <Button type="link" style={{ marginTop: "0.5rem", marginRight: "1rem",  }}>
+              <span style={{fontWeight:'800',marginRight:'1rem'}}>Admin: </span>{category.nazivAdmin}<DownOutlined />
               </Button>
             </Dropdown>
           </div>
@@ -104,8 +108,8 @@ const CategoryBox: React.FC = () => {
         ) : (
           <>
             <h2>{category.nazivKategorije}</h2>
-            <p>{category.opisKategorije}</p>
-            <p>Admin: {category.nazivAdmin}</p>
+            <p><span style={{fontWeight:'800', marginRight:'1rem'}}>Opis: </span>{category.opisKategorije}</p>
+            <p><span style={{fontWeight:'800',marginRight:'1rem'}}>Admin: </span> {category.nazivAdmin}</p>
             <Button type="primary" style={{ marginTop: "0.5rem", marginRight: '1rem' }} onClick={handleEditClick}>
               Uredi
             </Button>
@@ -121,7 +125,7 @@ const CategoryBox: React.FC = () => {
         shape="circle"
         icon={<RightCircleOutlined />}
         style={{ backgroundColor: "#1F51FF" }}
-        onClick={() => handleNextClick(data, currentIndex, setCurrentIndex, setCategory)}
+        onClick={() => handleNextClick(categories, currentIndex, setCurrentIndex, setCategory, )}
         disabled={editing}
       />
       <DeleteCategoryModal visible={deleteModalVisible} onCancel={hideDeleteModal} category={categoryToDelete}/>
