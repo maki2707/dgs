@@ -6,7 +6,6 @@ import VideogamesDetail from "../components/VideogamesDetail";
 
 const Home = () => {
     const { categoryIndex, setCategoryIndex } = useContext(CategoryContext);
-   
     return(
         <>
             <CategoryBox/>

@@ -45,15 +45,20 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ visible, onCancel, 
         <Form.Item
           label="Naziv kategorije"
           name="nazivKategorije"
-          rules={[{ required: true, message: 'Unesite naziv kategorije!' }]}
+          rules={[{ required: true, message: 'Unesite naziv kategorije!' },
+          { max: 30, message: 'Maksimalna dužina naziva je 30 znakova.' },
+                 ]}
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Opis kategorije" name="opisKategorije">
+        <Form.Item label="Opis kategorije" name="opisKategorije"
+        rules={[{ required: true, message: 'Unesite opis kategorije!' },
+        { max: 500, message: 'Maksimalna opisa je 500 znakova.' },
+               ]}>
           <Input.TextArea />
         </Form.Item>
         <Form.Item
-          label="Administrator"
+          label="Napraviti dropdown"
           name="admin"
           rules={[{ required: true, message: 'Unesite ime administratora!' }]}
         >

@@ -1,6 +1,6 @@
 // categoryBoxUtils.ts
 
-import { categoriesList } from "../../hooks/Category/useGetCategories";
+import { categoriesList } from "../hooks/Category/useGetCategories";
 
 interface Category {
   nazivKategorije: string;

@@ -8,6 +8,9 @@ import DeleteModal from '../components/modals/Publisher/DeletePublisherModal';
 import EditPublisherModal from '../components/modals/Publisher/EditPublisherModal';
 import AddPublisherModal from '../components/modals/Publisher/AddPublisherModal';
 import { Proizvođač } from '../types/Publisher';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Publishers: React.FC = () => {
 
@@ -55,8 +58,9 @@ const Publishers: React.FC = () => {
     const showAddModal = useCallback(() => {setAddModalVisible(true);}, []);
     const hideAddModal = useCallback(() => {setAddModalVisible(false);}, []);
     const {data, isLoading} = useGetPublishers() //fali BE
+    const notify = () => toast("Wow so easy!");
     return (
-        <div className='categoriesTable'> 
+        <div className='categoriesTable' data-testid="publisherTable"> 
             <div className='categoriesTable-header'>
                 <Input
                     className='categoriesTable-searchBar'
@@ -70,17 +74,24 @@ const Publishers: React.FC = () => {
                 </Button>
             </div>
             <Table
-                columns={publisherColumns}
-                dataSource={filteredPublishers} 
-                className='publisherTable' 
-                rowClassName='publisherTable-row' 
-                rowKey='nazivKategorije' 
-                size='small'
+              columns={publisherColumns}
+              dataSource={filteredPublishers}
+              className='publisherTable'
+              rowClassName='publisherTable-row'
+              rowKey='nazivKategorije'
+              size='small'
+              pagination={{
+                hideOnSinglePage: true,
+              }}
             />
-           <DeleteModal visible={deleteModalVisible} onCancel={hideDeleteModal} publisher={publisherToDelete}            />
+           
+
+           <DeleteModal visible={deleteModalVisible} onCancel={hideDeleteModal} publisher={publisherToDelete} />
            <EditPublisherModal visible={editModalVisible} publisher={publisherToEdit} onConfirm={(publisher) => console.log('Potvrda uređivanja', publisher)} 
-                                onCancel={() => setEditModalVisible(false)}/>
+                                onCancel={() => {setEditModalVisible(false);
+                                  notify()}}/>
             <AddPublisherModal visible={addModalVisible}  onCancel={hideAddModal}/>
+            
         </div>
     );
 };

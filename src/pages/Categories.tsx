@@ -54,7 +54,7 @@ const Categories: React.FC = () => {
 
     
     return (
-        <div className='categoriesTable'> 
+        <div className='categoriesTable' id="categories-table"> 
             <div className='categoriesTable-header'>
                 <Input
                     className='categoriesTable-searchBar'
