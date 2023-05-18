@@ -1,5 +1,5 @@
 export interface Proizvođač {
-    id: number,
-    nazivProizvođača: string;
+    idProizvodac: number,
+    nazivProizvodac: string;
     godOsnutka: string;
   }

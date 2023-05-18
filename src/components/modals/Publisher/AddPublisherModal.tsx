@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input } from 'antd';
+import { Modal, Form, Input, DatePicker } from 'antd';
 import { useAddPublisher } from '../../../hooks/Publisher/useAddPublisher';
 import { useQueryClient } from 'react-query';
-
-interface Proizvođač {
-    nazivProizvođača: string;
-    godOsnutka: string;
-  }
+import { Proizvođač } from '../../../types/Publisher';
 
 interface AddPublisherModalProps {
   visible: boolean;
@@ -21,19 +17,22 @@ const AddPublisherModal: React.FC<AddPublisherModalProps> = ({ visible, onCancel
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      const formattedDate = values.godOsnutka.format('YYYY-MM-DD'); // Format the date
+      values.godOsnutka = new Date(formattedDate); // Update the formatted date in values
       console.log(values);
       addPublisher.mutate(values, {
-        onSuccess:async () => {
-          await queryClient.invalidateQueries('publishersData');   
-          onCancel()
-        }
-      })
+        onSuccess: async () => {
+          await queryClient.invalidateQueries('publishersData');
+          onCancel();
+        },
+      });
     } catch (error) {
       console.log('Validation failed:', error);
     } finally {
       setSubmitting(false);
     }
   };
+  
 
   return (
     <Modal
@@ -45,7 +44,7 @@ const AddPublisherModal: React.FC<AddPublisherModalProps> = ({ visible, onCancel
     >
       <Form form={form} layout="vertical">
         <Form.Item
-          name="nazivProizvođača"
+          name="nazivProizvodac"
           label="Naziv proizvođača"
           rules={[{ required: true, message: 'Molimo unesite naziv proizvođača' }]}
         >
@@ -56,7 +55,7 @@ const AddPublisherModal: React.FC<AddPublisherModalProps> = ({ visible, onCancel
           label="Godina osnutka"
           rules={[{ required: true, message: 'Molimo unesite godinu osnutka' }]}
         >
-          <Input type="number" />
+        <DatePicker />
         </Form.Item>
       </Form>
     </Modal>

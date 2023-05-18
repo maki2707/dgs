@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Space, Table, Tag, Button, Input } from 'antd';
 import { ColumnsType, TableProps } from 'antd/lib/table';
 import { CategoryContext } from '../context/categoryContext';
-import { categoriesList } from "../hooks/Category/useGetCategories";
+import useGetCategories, { categoriesList } from "../hooks/Category/useGetCategories";
 import { useNavigate } from 'react-router-dom';
 import AddCategoryModal from '../components/modals/Category/AddCategoryModal';
 import { Kategorija } from '../types/Category';
@@ -31,6 +31,7 @@ const Categories: React.FC = () => {
     const { categoryIndex, setCategoryIndex } = useContext(CategoryContext);
     const [searchText, setSearchText] = useState<string>('');
     const [modalVisible, setModalVisible] = useState(false);
+    const {data, isLoading} = useGetCategories()
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchText(e.target.value);
     };
@@ -69,7 +70,7 @@ const Categories: React.FC = () => {
             </div>
             <Table
                 columns={columns} 
-                dataSource={filteredCategories} 
+                dataSource={data} 
                 className='categoriesTable' 
                 rowClassName='categoriesTable-row' 
                 rowKey='nazivKategorije' 

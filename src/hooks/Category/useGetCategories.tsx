@@ -5,7 +5,7 @@ export const useGetCategories = () => {
     const axios = useAxios();
     const getCategories = async () => {
         try {
-            const { data } = await axios.get(`/categories`);
+            const { data } = await axios.get(`/kategorija/get`);
 
             return data;
         } catch (error) {

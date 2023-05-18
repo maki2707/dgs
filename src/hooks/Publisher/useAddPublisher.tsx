@@ -5,7 +5,7 @@ export const useAddPublisher = () => {
   const axios = useAxios();
 
   const addPublisher = async (publisher: any) => {
-    return await axios.put(`/addpublisher`, publisher);
+    return await axios.post(`/proizvodac/create`, publisher);
   };
 
   return useMutation(addPublisher, {

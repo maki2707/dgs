@@ -5,7 +5,7 @@ export const useEditPublisher = (id: number) => {
   const axios = useAxios();
 
   const editPublisher = async (publisher: any) => {
-    return await axios.put(`/editpublisher/${id}`, publisher);
+    return await axios.put(`/proizvodac/update/${id}`, publisher);
   };
 
   return useMutation(editPublisher, {

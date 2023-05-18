@@ -3,13 +3,13 @@ import React, { useContext, useEffect, useState,useCallback } from 'react';
 import {  Table,  Button, Input } from 'antd';
 import type { ColumnsType,  } from 'antd/es/table';
 import { CategoryContext } from '../context/categoryContext';
-import { proizvođačiList, useGetPublishers } from "../hooks/Publisher/useGetPublishers";
 import DeleteModal from '../components/modals/Publisher/DeletePublisherModal';
 import EditPublisherModal from '../components/modals/Publisher/EditPublisherModal';
 import AddPublisherModal from '../components/modals/Publisher/AddPublisherModal';
 import { Proizvođač } from '../types/Publisher';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useGetPublishers } from '../hooks/Publisher/useGetPublishers';
 
 
 const Publishers: React.FC = () => {
@@ -17,15 +17,15 @@ const Publishers: React.FC = () => {
     const publisherColumns: ColumnsType<Proizvođač> = [
       {
         title: 'ID',
-        key: 'id',
-        dataIndex: 'id',
+        key: 'idProizvodac',
+        dataIndex: 'idProizvodac',
       },
         {
           title: <span className='categoriesTable-title'>Naziv proizvođača</span>,
-          dataIndex: 'nazivProizvođača',
-          key: 'nazivProizvođača',
+          dataIndex: 'nazivProizvodac',
+          key: 'nazivProizvodac',
           defaultSortOrder: 'ascend',
-          sorter: (a, b) => a.nazivProizvođača.localeCompare(b.nazivProizvođača),
+          sorter: (a, b) => a.nazivProizvodac.localeCompare(b.nazivProizvodac),
         },
         {
           title: <span className='categoriesTable-title'>Godina osnutka</span>,
@@ -53,11 +53,11 @@ const Publishers: React.FC = () => {
     const hideDeleteModal = useCallback(() => {setPublisherToDelete(null);setDeleteModalVisible(false);}, []);
     const showDeleteModal = useCallback((publisher: Proizvođač) => {setPublisherToDelete(publisher);setDeleteModalVisible(true);}, []);
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {setSearchText(e.target.value);}; 
-    const filteredPublishers = proizvođačiList.proizvođači.filter((p) => {return p.nazivProizvođača.toLowerCase().includes(searchText.toLowerCase());});
     const showEditModal = useCallback((publisher: Proizvođač) => {setPublisherToEdit(publisher);setEditModalVisible(true);}, []);
     const showAddModal = useCallback(() => {setAddModalVisible(true);}, []);
     const hideAddModal = useCallback(() => {setAddModalVisible(false);}, []);
-    const {data, isLoading} = useGetPublishers() //fali BE
+    const {data, isLoading} = useGetPublishers() 
+    const filteredPublishers = data?.filter((p: Proizvođač) => {return p.nazivProizvodac.toLowerCase().includes(searchText.toLowerCase());});
     const notify = () => toast("Wow so easy!");
     return (
         <div className='categoriesTable' data-testid="publisherTable"> 

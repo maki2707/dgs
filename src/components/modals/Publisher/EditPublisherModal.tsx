@@ -36,13 +36,13 @@ const EditPublisherModal: React.FC<EditPublisherModalProps> = ({ visible, onConf
     }
   };
 
-  const editPublisher = useEditPublisher(publisher?.id)
+  const editPublisher = useEditPublisher(publisher?.idProizvodac)
   const queryClient = useQueryClient();
 
   return (
     <Modal
       visible={visible}
-      title={`Uredi proizvođača - "${publisher?.nazivProizvođača}"`}
+      title={`Uredi proizvođača - "${publisher?.nazivProizvodac}"`}
       onCancel={handleCancel}
       onOk={handleOk}
       okText="Spremi"
@@ -52,7 +52,7 @@ const EditPublisherModal: React.FC<EditPublisherModalProps> = ({ visible, onConf
       <Form form={form} layout="vertical" initialValues={{ ...publisher }}>
         <Form.Item
           label="Naziv proizvođača"
-          name="nazivProizvođača"
+          name="nazivProizvodac"
           rules={[{ required: true, message: 'Molimo unesite naziv proizvođača!' }]}
         >
           <Input />
@@ -60,12 +60,7 @@ const EditPublisherModal: React.FC<EditPublisherModalProps> = ({ visible, onConf
         <Form.Item 
             label="Godina osnutka" 
             name="godOsnutka" 
-            rules={[
-                {
-                pattern: /^\d+$/,
-                message: 'Godina osnutka može sadržavati samo brojeve!',
-                },
-            ]}>
+          >
         
           <Input />
         </Form.Item>

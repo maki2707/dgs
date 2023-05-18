@@ -19,7 +19,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ visible, onCancel, publisher 
   const onConfirm = () => {
     if (publisher) {
       
-      deletePublisher.mutate(publisher.id, {
+      deletePublisher.mutate(publisher.idProizvodac, {
         onSuccess: async () => {
           await queryClient.invalidateQueries('publishersData');
           toast.success("Brisanje uspješno!")
@@ -33,7 +33,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ visible, onCancel, publisher 
     <>
       <Modal
         visible={visible}
-        title={`Jeste li sigurni da želite obrisati proizvođača - "${publisher?.nazivProizvođača}"?`}
+        title={`Jeste li sigurni da želite obrisati proizvođača - "${publisher?.nazivProizvodac}"?`}
         onCancel={onCancel}
         okText="Obriši"
         okType='danger'
