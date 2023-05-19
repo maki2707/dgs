@@ -58,7 +58,7 @@ const Publishers: React.FC = () => {
     const hideAddModal = useCallback(() => {setAddModalVisible(false);}, []);
     const {data, isLoading} = useGetPublishers() 
     const filteredPublishers = data?.filter((p: Proizvođač) => {return p.nazivProizvodac.toLowerCase().includes(searchText.toLowerCase());});
-    const notify = () => toast("Wow so easy!");
+    console.log(publisherToEdit)
     return (
         <div className='categoriesTable' data-testid="publisherTable"> 
             <div className='categoriesTable-header'>
@@ -87,9 +87,13 @@ const Publishers: React.FC = () => {
            
 
            <DeleteModal visible={deleteModalVisible} onCancel={hideDeleteModal} publisher={publisherToDelete} />
-           <EditPublisherModal visible={editModalVisible} publisher={publisherToEdit} onConfirm={(publisher) => console.log('Potvrda uređivanja', publisher)} 
-                                onCancel={() => {setEditModalVisible(false);
-                                  notify()}}/>
+           <EditPublisherModal
+              visible={editModalVisible}
+              publisher={publisherToEdit}
+              onConfirm={(publisher) => console.log('Potvrda uređivanja', publisher)}
+              onCancel={() => setEditModalVisible(false)}
+              setPublisherToEdit={(publisher) => setPublisherToEdit(publisher)}
+            />
             <AddPublisherModal visible={addModalVisible}  onCancel={hideAddModal}/>
             
         </div>

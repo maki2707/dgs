@@ -1,34 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input } from 'antd';
 import { useEditPublisher } from '../../../hooks/Publisher/useEditPublisher';
 import { useQueryClient } from 'react-query';
+import { toast } from 'react-toastify';
 
 interface EditPublisherModalProps {
   visible: boolean;
   onConfirm: (updatedPublisher: any) => void;
   onCancel: () => void;
   publisher: any;
+  setPublisherToEdit: (publisher: any) => void;
 }
 
-const EditPublisherModal: React.FC<EditPublisherModalProps> = ({ visible, onConfirm, onCancel, publisher }) => {
+const EditPublisherModal: React.FC<EditPublisherModalProps> = ({ visible, onConfirm, onCancel, publisher, setPublisherToEdit }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (visible) {
+      form.resetFields();
+      form.setFieldsValue(publisher);
+    }
+  }, [visible, publisher, form]);
+
   const handleCancel = () => {
     form.resetFields();
+    setPublisherToEdit(null);
     onCancel();
   };
+
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      console.log(values);
       setLoading(true);
       editPublisher.mutate(values, {
-        onSuccess:async () => {
-          await queryClient.invalidateQueries('publishersData');   
-          onCancel()
+        onSuccess: async () => {
+          await queryClient.invalidateQueries('publishersData');
+          toast.success('Uspješna izmjena proizvođača!');
+          form.resetFields();
+          onCancel();
         }
-      })
-      form.resetFields();
+      });
     } catch (error) {
       console.log('Error validating form: ', error);
     } finally {
@@ -36,7 +48,7 @@ const EditPublisherModal: React.FC<EditPublisherModalProps> = ({ visible, onConf
     }
   };
 
-  const editPublisher = useEditPublisher(publisher?.idProizvodac)
+  const editPublisher = useEditPublisher(publisher?.idProizvodac);
   const queryClient = useQueryClient();
 
   return (
@@ -49,7 +61,7 @@ const EditPublisherModal: React.FC<EditPublisherModalProps> = ({ visible, onConf
       cancelText="Odustani"
       confirmLoading={loading}
     >
-      <Form form={form} layout="vertical" initialValues={{ ...publisher }}>
+      <Form form={form} layout="vertical">
         <Form.Item
           label="Naziv proizvođača"
           name="nazivProizvodac"
@@ -57,11 +69,11 @@ const EditPublisherModal: React.FC<EditPublisherModalProps> = ({ visible, onConf
         >
           <Input />
         </Form.Item>
-        <Form.Item 
-            label="Godina osnutka" 
-            name="godOsnutka" 
-          >
-        
+        <Form.Item
+          label="Godina osnutka"
+          name="godOsnutka"
+          rules={[{ required: true, message: 'Molimo odaberite godinu!' }]}
+        >
           <Input />
         </Form.Item>
       </Form>

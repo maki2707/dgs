@@ -3,6 +3,7 @@ import { Modal, Form, Input, DatePicker } from 'antd';
 import { useAddPublisher } from '../../../hooks/Publisher/useAddPublisher';
 import { useQueryClient } from 'react-query';
 import { Proizvođač } from '../../../types/Publisher';
+import { toast } from 'react-toastify';
 
 interface AddPublisherModalProps {
   visible: boolean;
@@ -23,6 +24,7 @@ const AddPublisherModal: React.FC<AddPublisherModalProps> = ({ visible, onCancel
       addPublisher.mutate(values, {
         onSuccess: async () => {
           await queryClient.invalidateQueries('publishersData');
+          toast.success('Uspješno dodan proizvođač!');
           onCancel();
         },
       });
