@@ -83,7 +83,6 @@ const VideogamesDetail: React.FC = () => {
                     Dodaj novu videoigru
         </Button>
       </div>
-      <div style={{ color: 'white' }}>{category.nazivKategorije}</div>
       <Table
         columns={columns}
         dataSource={data}

@@ -10,6 +10,8 @@ import { Proizvođač } from '../types/Publisher';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useGetPublishers } from '../hooks/Publisher/useGetPublishers';
+import useSearchPublishers from '../hooks/Publisher/useSearchPublishers';
+import queryClient from '../util/queryClients';
 
 
 const Publishers: React.FC = () => {
@@ -45,6 +47,7 @@ const Publishers: React.FC = () => {
         },
       ];
     const [searchText, setSearchText] = useState<string>('');
+    const { data: searchResults, isLoading: isSearchLoading } = useSearchPublishers(searchText); 
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [addModalVisible, setAddModalVisible] = useState(false);
@@ -52,12 +55,18 @@ const Publishers: React.FC = () => {
     const [publisherToEdit, setPublisherToEdit] = useState<Proizvođač | null>(null);
     const hideDeleteModal = useCallback(() => {setPublisherToDelete(null);setDeleteModalVisible(false);}, []);
     const showDeleteModal = useCallback((publisher: Proizvođač) => {setPublisherToDelete(publisher);setDeleteModalVisible(true);}, []);
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {setSearchText(e.target.value);}; 
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value);
+      if(searchText.length > 2){
+          queryClient.invalidateQueries('categoriesDataSearch')
+      }
+      
+  };
     const showEditModal = useCallback((publisher: Proizvođač) => {setPublisherToEdit(publisher);setEditModalVisible(true);}, []);
     const showAddModal = useCallback(() => {setAddModalVisible(true);}, []);
     const hideAddModal = useCallback(() => {setAddModalVisible(false);}, []);
     const {data, isLoading} = useGetPublishers() 
-    const filteredPublishers = data?.filter((p: Proizvođač) => {return p.nazivProizvodac.toLowerCase().includes(searchText.toLowerCase());});
+    const filteredPublishers = searchResults ? searchResults : data ; 
     console.log(publisherToEdit)
     return (
         <div className='categoriesTable' data-testid="publisherTable"> 

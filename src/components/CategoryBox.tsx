@@ -16,44 +16,41 @@ import { toast } from "react-toastify";
 const CategoryBox: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const { data: admins, isLoading: isAdminLoading } = useGetAdmins();
-  const { data: categories, isLoading: isCategoryLoading } = useGetCategories();
+  const { data: categories, isLoading: isCategoryLoading, refetch} = useGetCategories();
   const { category, setCategory } = useContext(CategoryContext);
   const [form] = Form.useForm();
   const [editing, setEditing] = useState<boolean>(false);
   const [admin, setAdmin] = useState<Admin>();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<Kategorija | null>(null);
-  
+
   useEffect(() => {
     form.setFieldsValue({
       nazivKategorije: category.nazivKategorije,
       opisKategorije: category.opisKategorije,
       idAdmin: category.idAdmin
     });
-    
   }, [category, form]);
-  
   const editCategory = useEditCategory(category.idKategorija);
-  
-  const handleEditClick = () => {
-    setEditing(true);
-  };
-  useEffect(() => {
-    console.log('juz efekt')
-    queryClient.invalidateQueries('categoriesData');
-  }, [editing]);
+  const handleEditClick = () => {setEditing(true);};
+
   const handleSaveClick = async () => {
     try {
       const values = await form.validateFields();
+      const selectedAdmin = admins.find((admin: Admin) => admin.idKorisnik === values.idAdmin);
       const kategorija: any = {
         nazivKategorije: values.nazivKategorije,
         opisKategorije: values.opisKategorije,
         idAdmin: values.idAdmin,
+        nazivAdmin: selectedAdmin ? selectedAdmin.korisnickoIme : '',
       };
       editCategory.mutate(kategorija, {
         onSuccess: async () => {
+          refetch()
           toast.success("Kategorija uspješno ažurirana!");
           await queryClient.invalidateQueries('categoriesData');
+          refetch()
+          setCategory({ ...category, ...kategorija });
         },
       });
       setEditing(false);
@@ -115,9 +112,9 @@ const CategoryBox: React.FC = () => {
                 </Select.Option>
               ) : (
                 admins?.map((admin: Admin) => (
-                  <Select.Option key={admin.idUloga} value={admin.idKorisnik}>
-                    {admin.korisnickoIme}
-                  </Select.Option>
+                  <Select.Option key={admin.idKorisnik} value={admin.idKorisnik}>
+                  {admin.korisnickoIme}
+                </Select.Option>
                 ))
               )}
             </Select>

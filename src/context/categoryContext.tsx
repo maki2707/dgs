@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 
 export interface Kategorija {
   nazivKategorije: string;
@@ -31,13 +31,20 @@ type CategoryProviderProps = {
 export const CategoryProvider = ({
   children,
 }: CategoryProviderProps): JSX.Element => {
-  const [category, setCategory] = useState<Kategorija>({
-    nazivKategorije: '',
-    opisKategorije: '',
-    nazivAdmin: '',
-    idAdmin: 0,
-    idKategorija: 0,
+  const [category, setCategory] = useState<Kategorija>(() => {
+    const storedCategory = localStorage.getItem('category');
+    return storedCategory ? JSON.parse(storedCategory) : {
+      nazivKategorije: '',
+      opisKategorije: '',
+      nazivAdmin: '',
+      idAdmin: 0,
+      idKategorija: 0,
+    };
   });
+
+  useEffect(() => {
+    localStorage.setItem('category', JSON.stringify(category));
+  }, [category]);
 
   return (
     <CategoryContext.Provider value={{ category, setCategory }}>
