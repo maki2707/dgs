@@ -1,5 +1,6 @@
 import { Kategorija } from "../types/Category";
 import { Admin } from "../types/Admin";
+import queryClient from "./queryClients";
 export const handlePrevClick = (
   data: Kategorija[],
   currentIndex: number,
@@ -10,6 +11,7 @@ export const handlePrevClick = (
   const prevIndex = currentIndex === 0 ? data.length - 1 : currentIndex - 1;
   setCurrentIndex(prevIndex);
   setCategory(data[prevIndex]);
+  queryClient.invalidateQueries('videogamesData');
 };
 
 export const handleNextClick = (
@@ -22,6 +24,7 @@ export const handleNextClick = (
   const nextIndex = currentIndex === data.length - 1 ? 0 : currentIndex + 1;
   setCurrentIndex(nextIndex);
   setCategory(data[nextIndex]);
+  queryClient.invalidateQueries('videogamesData');
   
 };
 
@@ -38,6 +41,7 @@ export const handleCategoryClick = (
   setCurrentIndex(data.indexOf(category));
   setSearchText("");
   setSearchResults([]);
+  queryClient.invalidateQueries('videogamesData');
 };
 
 export const handleSearch = (

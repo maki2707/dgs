@@ -12,11 +12,12 @@ interface Videogame {
     minHardware: string;
 }
 
-export const useGetVideogames = () => {
+export const useGetVideogames = (id: number) => {
     const axios = useAxios();
-    const getVideogames= async () => {
+
+    const getVideogames = async (categoryId: number) => {
         try {
-            const { data } = await axios.get(`/videogames`);
+            const { data } = await axios.get(`/videoigra/get/categoryid/${categoryId}`);
 
             return data;
         } catch (error) {
@@ -25,87 +26,10 @@ export const useGetVideogames = () => {
         return;
     };
 
-    return useQuery(["videogamesData"], () => getVideogames(), {
+    return useQuery(["videogamesData", id], () => getVideogames(id), {
         onError: (error) => console.log(error),
         staleTime: Infinity,
     });
 };
 
-const videogamesList: Record<string, Videogame[]> = {
-"Akcija": [
-{
-"nazivVideoigre": "Doom Eternal",
-"cijenaVideoigre": 59.99,
-"proizvođač": {
-"nazivProizvođača": "id Software",
-"godOsnutka": "1991"
-},
-"minHardware": "NVIDIA GeForce GTX 1050Ti"
-},
-{
-"nazivVideoigre": "Assassin's Creed Valhalla",
-"cijenaVideoigre": 69.99,
-"proizvođač": {
-"nazivProizvođača": "Ubisoft",
-"godOsnutka": "1986"
-},
-"minHardware": "NVIDIA GeForce GTX 960"
-}
-],
-"Simulacija": [
-{
-"nazivVideoigre": "Farming Simulator 22",
-"cijenaVideoigre": 39.99,
-"proizvođač": {
-"nazivProizvođača": "GIANTS Software",
-"godOsnutka": "2008"
-},
-"minHardware": "Intel Core i3-2100T"
-},
-{
-"nazivVideoigre": "Microsoft Flight Simulator",
-"cijenaVideoigre": 59.99,
-"proizvođač": {
-"nazivProizvođača": "Asobo Studio",
-"godOsnutka": "2002"
-},
-"minHardware": "NVIDIA GeForce GTX 770"
-}
-],
-"Sportske": [
-{
-"nazivVideoigre": "FIFA 22",
-"cijenaVideoigre": 59.99,
-"proizvođač": {
-"nazivProizvođača": "EA Sports",
-"godOsnutka": "1991"
-},
-"minHardware": "AMD Radeon R7 260X"
-},
-{
-"nazivVideoigre": "NBA 2K22",
-"cijenaVideoigre": 69.99,
-"proizvođač": {
-"nazivProizvođača": "Visual Concepts",
-"godOsnutka": "1988"
-},
-"minHardware": "NVIDIA GeForce GTX 750 Ti"
-}
-]
-};
-
-const useGetVideogame = (category: string): Videogame[] => {
-const [videogames, setVideogames] = useState<Videogame[]>([]);
-
-useEffect(() => {
-if (videogamesList[category]) {
-setVideogames(videogamesList[category]);
-} else {
-setVideogames([]);
-}
-}, [category]);
-
-return videogames;
-};
-
-export default useGetVideogame;
+export default useGetVideogames;

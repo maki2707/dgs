@@ -22,9 +22,9 @@ const columns: ColumnsType<Videoigra> = [
   },
   {
     title: 'Proizvođač',
-    dataIndex: 'nazivProizvodac',
-    key: 'nazivProizvodac',
-    render: (proizvodac: Proizvođač) => proizvodac.nazivProizvodac,
+    dataIndex: 'idProizvodac',
+    key: 'idProizvodac',
+    render: (proizvodac: Proizvođač) => proizvodac.idProizvodac,
   },
   {
     title: 'Minimalna konfiguracija',
@@ -47,8 +47,7 @@ const columns: ColumnsType<Videoigra> = [
 const VideogamesDetail: React.FC = () => {
   const [searchText, setSearchText] = useState<string>('');
   const { category } = useContext(CategoryContext);
-  const videogamesList = useGetVideogame(category.nazivKategorije);
-  const {data, isLoading} = useGetVideogames()
+  const {data, isLoading} = useGetVideogames(category.idKategorija)
   return (
     <div className='videogamesBox'>
       <div className='videogamesTable-header'>

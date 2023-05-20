@@ -18,8 +18,8 @@ const AddPublisherModal: React.FC<AddPublisherModalProps> = ({ visible, onCancel
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const formattedDate = values.godOsnutka.format('YYYY-MM-DD'); // Format the date
-      values.godOsnutka = new Date(formattedDate); // Update the formatted date in values
+      const formattedDate = values.godOsnutka.format('YYYY-MM-DD'); 
+      values.godOsnutka = new Date(formattedDate);
       console.log(values);
       addPublisher.mutate(values, {
         onSuccess: async () => {

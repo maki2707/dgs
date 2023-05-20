@@ -6,7 +6,7 @@ export const useAddCategory = () => {
   const axios = useAxios();
 
   const addCategory = async (kategorija: any) => {
-    return await axios.put(`/addcategory`, kategorija);
+    return await axios.post(`/kategorija/create`, kategorija);
   };
 
   return useMutation(addCategory, {
