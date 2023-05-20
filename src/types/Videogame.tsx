@@ -4,6 +4,6 @@ export interface Videoigra {
     idMinHardver: number,
     minHardver: string,
     nazivVideoigre: string,
-    idVideoigre: number,
+    idVideoigra: number,
     cijenaVideoigre: number,
   }

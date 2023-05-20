@@ -6,7 +6,7 @@ export const useDeleteVideogame = () => {
   const axios = useAxios();
 
   const deleteVideogame = async (id: number) => {
-    return await axios.delete(`/deleteVideogame/${id}`);
+    return await axios.delete(`/videoigra/delete/${id}`);
   };
 
   return useMutation(deleteVideogame, {

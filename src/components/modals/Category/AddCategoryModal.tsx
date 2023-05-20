@@ -73,7 +73,7 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ visible, onCancel }
           <Input.TextArea />
         </Form.Item>
         <Form.Item
-          label="Napraviti dropdown"
+          label="Odabir admina:"
           name="idAdmin"
           rules={[{ required: true, message: 'Unesite ime administratora!' }]}
         >

@@ -1,11 +1,11 @@
 import { useMutation } from 'react-query';
 import useAxios from '../useAxios';
 
-export const useEditVideogame = (id: number) => {
+export const useEditVideogame = (id: number | undefined) => {
   const axios = useAxios();
 
   const editVideogame = async (Videogame: any) => {
-    return await axios.put(`/editVideogame/${id}`, Videogame);
+    return await axios.put(`/videoigra/update/${id}`, Videogame);
   };
 
   return useMutation(editVideogame, {

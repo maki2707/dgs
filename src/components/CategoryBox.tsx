@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import { LeftCircleOutlined, RightCircleOutlined, DownOutlined } from "@ant-design/icons";
-import { Button, Input, Menu, Dropdown } from "antd";
+import { Button, Input, Menu, Dropdown, Select, Form } from "antd";
 import { CategoryContext } from "../context/categoryContext";
 import { handlePrevClick, handleNextClick, handleCategoryClick, handleSearch } from "../util/categoryBoxUtil";
 import { Kategorija } from "../types/Category";
@@ -9,52 +9,73 @@ import DeleteCategoryModal from "./modals/Category/DeleteCategoryModal";
 import useGetCategories from "../hooks/Category/useGetCategories";
 import { useGetAdmins } from "../hooks/Admin/useGetAdmins";
 import { Admin } from "../types/Admin";
+import { useEditCategory } from "../hooks/Category/useEditCategory";
+import queryClient from "../util/queryClients";
+import { toast } from "react-toastify";
 
 const CategoryBox: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const { data: admins, isLoading: isAdminLoading } = useGetAdmins();
   const { data: categories, isLoading: isCategoryLoading } = useGetCategories();
   const { category, setCategory } = useContext(CategoryContext);
+  const [form] = Form.useForm();
   const [editing, setEditing] = useState<boolean>(false);
-  const [categoryName, setCategoryName] = useState<string>(category.nazivKategorije);
-  const [categoryDesc, setCategoryDesc] = useState<string>(category.opisKategorije);
-  const handleAdminSelect = (value: string) => {
-    setAdmin(value);
-  };
-  const [admin, setAdmin] = useState<string>(category.nazivAdmin);
+  const [admin, setAdmin] = useState<Admin>();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<Kategorija | null>(null);
+  
+  useEffect(() => {
+    form.setFieldsValue({
+      nazivKategorije: category.nazivKategorije,
+      opisKategorije: category.opisKategorije,
+      idAdmin: category.idAdmin
+    });
+    
+  }, [category, form]);
+  
+  const editCategory = useEditCategory(category.idKategorija);
+  
+  const handleEditClick = () => {
+    setEditing(true);
+  };
+  useEffect(() => {
+    console.log('juz efekt')
+    queryClient.invalidateQueries('categoriesData');
+  }, [editing]);
+  const handleSaveClick = async () => {
+    try {
+      const values = await form.validateFields();
+      const kategorija: any = {
+        nazivKategorije: values.nazivKategorije,
+        opisKategorije: values.opisKategorije,
+        idAdmin: values.idAdmin,
+      };
+      editCategory.mutate(kategorija, {
+        onSuccess: async () => {
+          toast.success("Kategorija uspješno ažurirana!");
+          await queryClient.invalidateQueries('categoriesData');
+        },
+      });
+      setEditing(false);
+      queryClient.invalidateQueries('categoriesData');
+    } catch (error) {
+      console.log('Form validation error:', error);
+    }
+  };
+  
+
+  const handleCancelClick = () => {
+    setEditing(false);
+  };
   const hideDeleteModal = useCallback(() => {
     setCategoryToDelete(null);
     setDeleteModalVisible(false);
   }, []);
+
   const showDeleteModal = useCallback((category: Kategorija) => {
     setCategoryToDelete(category);
     setDeleteModalVisible(true);
   }, []);
-
-  const handleEditClick = () => {
-    setEditing(true);
-  };
-
-  const handleSaveClick = () => {
-    setEditing(false);
-    console.log(categoryName, categoryDesc);
-  };
-
-  const handleCancelClick = () => {
-    setEditing(false);
-    setCategoryName(category.nazivKategorije);
-    setCategoryDesc(category.opisKategorije);
-  };
-
-  const adminMenu = (
-    <Menu onClick={(e) => handleAdminSelect(e.key as string)}>
-      {admins?.map((admin: Admin) => (
-        <Menu.Item key={admin.idKorisnik.toString()}>{admin.korisnickoIme}</Menu.Item>
-      ))}
-    </Menu>
-  );
 
   return (
     <div className="category-con" data-testid="master-header">
@@ -63,7 +84,7 @@ const CategoryBox: React.FC = () => {
         shape="circle"
         icon={<LeftCircleOutlined />}
         style={{ backgroundColor: "#1F51FF" }}
-        onClick={() => handlePrevClick(categories, currentIndex, setCurrentIndex, setCategory, )}
+        onClick={() => handlePrevClick(categories, currentIndex, setCurrentIndex, setCategory)}
         disabled={editing}
       />
 
@@ -76,41 +97,57 @@ const CategoryBox: React.FC = () => {
         }}
       >
         {editing ? (
-          <>
-          <div>
-            <div style={{display:'flex'}}>
-            <Input
-              value={categoryName}
-              onChange={(e) => setCategoryName(e.target.value)}
-              style={{ marginBottom: "1rem" }}
-            />
-            <Dropdown overlay={adminMenu} trigger={['click']} overlayStyle={{backgroundColor: 'blue'}}>
-              <Button type="link" style={{ marginTop: "0.5rem", marginRight: "1rem",  }}>
-              <span style={{fontWeight:'800',marginRight:'1rem'}}>Admin: </span>{category.nazivAdmin}<DownOutlined />
-              </Button>
-            </Dropdown>
+          
+        <Form form={form} >
+          <div style={{display: 'flex'}}>
+          <Form.Item name="nazivKategorije">
+            <Input style={{ width: "10rem", marginRight: '1rem' }} />
+          </Form.Item>
+          <Form.Item
+            label="Odabir admina:"
+            name="idAdmin"
+            rules={[{ required: true, message: 'Unesite ime administratora!' }]}
+          >
+            <Select placeholder="Odaberite administratora">
+              {isAdminLoading ? (
+                <Select.Option value="" disabled>
+                  Učitavanje...
+                </Select.Option>
+              ) : (
+                admins?.map((admin: Admin) => (
+                  <Select.Option key={admin.idUloga} value={admin.idKorisnik}>
+                    {admin.korisnickoIme}
+                  </Select.Option>
+                ))
+              )}
+            </Select>
+          </Form.Item>
           </div>
-            <Input.TextArea
-              value={categoryDesc}
-              onChange={(e) => setCategoryDesc(e.target.value)}
-              rows={4}
-            />
-            
-
+          <Form.Item name="opisKategorije">
+            <Input.TextArea rows={2} />
+          </Form.Item>
+          <Form.Item>
             <Button type="primary" onClick={handleSaveClick}>
               Spremi
             </Button>
             <Button style={{ marginLeft: "1rem" }} onClick={handleCancelClick}>
               Odustani
             </Button>
-          </div>
-          </>
+          </Form.Item>
+        </Form>
+
+         
         ) : (
           <>
             <h2>{category.nazivKategorije}</h2>
-            <p><span style={{fontWeight:'800', marginRight:'1rem'}}>Opis: </span>{category.opisKategorije}</p>
-            <p><span style={{fontWeight:'800',marginRight:'1rem'}}>Admin: </span> {category.nazivAdmin}</p>
-            <Button type="primary" style={{ marginTop: "0.5rem", marginRight: '1rem' }} onClick={handleEditClick}>
+            <p>
+              <span style={{ fontWeight: "800", marginRight: "1rem" }}>Opis: </span>
+              {category.opisKategorije}
+            </p>
+            <p>
+              <span style={{ fontWeight: "800", marginRight: "1rem" }}>Admin: </span> {category.nazivAdmin}
+            </p>
+            <Button type="primary" style={{ marginTop: "0.5rem", marginRight: "1rem" }} onClick={handleEditClick}>
               Uredi
             </Button>
             <Button danger style={{ marginTop: "0.5rem" }} onClick={() => showDeleteModal(category)}>
@@ -125,12 +162,11 @@ const CategoryBox: React.FC = () => {
         shape="circle"
         icon={<RightCircleOutlined />}
         style={{ backgroundColor: "#1F51FF" }}
-        onClick={() => handleNextClick(categories, currentIndex, setCurrentIndex, setCategory, )}
+        onClick={() => handleNextClick(categories, currentIndex, setCurrentIndex, setCategory)}
         disabled={editing}
       />
-      <DeleteCategoryModal visible={deleteModalVisible} onCancel={hideDeleteModal} category={categoryToDelete}/>
+      <DeleteCategoryModal visible={deleteModalVisible} onCancel={hideDeleteModal} category={categoryToDelete} />
     </div>
-
   );
 };
 

@@ -110,3 +110,8 @@ box-shadow: 0px 5px 20px -13px rgba(31,81,255,1);
 .toast.error {
   background-color: #f44336;
 }
+
+.videogamesTable-header{
+  display: flex;
+  justify-content: space-between;
+}

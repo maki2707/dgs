@@ -6,7 +6,7 @@ export const useAddVideogame = () => {
   const axios = useAxios();
 
   const addVideogame = async (Videogame: any) => {
-    return await axios.put(`/addVideogame`, Videogame);
+    return await axios.post(`/videoigra/create`, Videogame);
   };
 
   return useMutation(addVideogame, {
