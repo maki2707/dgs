@@ -1,4 +1,4 @@
-export interface MinHardver {
+export type MinHardver = {
     idMinhardver: number;
     procesor: string;
     grafickaKartica: string;

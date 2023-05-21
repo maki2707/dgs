@@ -7,8 +7,7 @@ import './index.css';
 import { CategoryProvider } from './context/categoryContext';
 import Categories from './pages/Categories';
 import Publishers from './pages/Publishers';
-import { useState } from 'react';
-
+import LandingPage from './pages/LandingPage';
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -18,12 +17,12 @@ const App = () => {
         <Router>
           <Navbar />
           <Routes>
+            <Route path="/" element={<LandingPage />}></Route>
             <Route path="/:category" element={<Home />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/publishers" element={<Publishers />} />
           </Routes>
         </Router>
-       
       </QueryClientProvider>
     </CategoryProvider>
   );

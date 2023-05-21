@@ -1,4 +1,4 @@
-export interface Videoigra {
+export type Videoigra = {
     idProizvodac: number,
     nazivProizvodac: string,
     idMinHardver: number,

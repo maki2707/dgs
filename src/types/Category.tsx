@@ -1,4 +1,4 @@
-export interface Kategorija {
+export type Kategorija = {
     nazivKategorije: string;
     opisKategorije: string;
     nazivAdmin: string,
