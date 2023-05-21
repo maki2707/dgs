@@ -81,12 +81,13 @@ const AddVideogameModal: React.FC<AddVideogameModalProps> = ({ visible, onCancel
         <Form.Item
           name="nazivVideoigre"
           label="Naziv videoigre"
-          rules={[{ required: true, message: 'Unesite naziv videoigre' }]}
+          rules={[{ required: true, message: 'Naziv videoigre je obavezan' },
+          { max: 50, message: 'Naziv videoigre ne smije biti duži od 50 znakova' },]}
         >
           <Input placeholder="Unesite naziv videoigre" />
         </Form.Item>
-        <Form.Item name="idProizvodac" label="Proizvođač" rules={[{ required: true, message: 'Odaberite proizvođač' }]}>
-          <Select placeholder="Odaberite proizvođač">
+        <Form.Item name="idProizvodac" label="Proizvođač" rules={[{ required: true, message: 'Odaberite proizvođača' }]}>
+          <Select placeholder="Odaberite proizvođača">
             {publishers?.map((publisher: Proizvođač) => (
               <Select.Option key={publisher.idProizvodac} value={publisher.idProizvodac}>
                 {publisher.nazivProizvodac}
