@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Button, Select } from 'antd';
 import { useQueryClient } from 'react-query';
 import { useAddPublisher } from '../../../hooks/Publisher/useAddPublisher';
@@ -14,31 +14,37 @@ interface AddCategoryModalProps {
 }
 
 const { Option } = Select;
-
 const AddCategoryModal: React.FC<AddCategoryModalProps> = ({ visible, onCancel }) => {
   const queryClient = useQueryClient();
   const addCategory = useAddCategory();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const { data: admins, isLoading: isAdminLoading } = useGetAdmins();
-
+  
+  useEffect(() => {
+    if (visible) {
+      form.resetFields();
+    }
+  }, [visible,  form]);
   const onFinish = async () => {
     try {
       const values = await form.validateFields();
-      setLoading(true);
       addCategory.mutate(values, {
         onSuccess: async () => {
           toast.success("Kategorija uspješno dodana!")
           await queryClient.invalidateQueries('categoriesData');
           onCancel();
         },
+        onError: (error:any) => {
+          if (error.response?.status === 400) {
+            toast.error('Pogreška u dodavanju: kategorija s tim nazivom već postoji!');
+          }
+        },
       });
       form.resetFields();
     } catch (error) {
       console.log('Error validating form: ', error);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   return (

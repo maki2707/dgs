@@ -52,6 +52,11 @@ const CategoryBox: React.FC = () => {
           refetch()
           setCategory({ ...category, ...kategorija });
         },
+        onError: (error:any) => {
+          if (error.response?.status === 400) {
+            toast.error('Pogreška u ažuriranju: kategorija s tim nazivom već postoji!');
+          }
+        },
       });
       setEditing(false);
       queryClient.invalidateQueries('categoriesData');
@@ -97,8 +102,13 @@ const CategoryBox: React.FC = () => {
           
         <Form form={form} >
           <div style={{display: 'flex'}}>
-          <Form.Item name="nazivKategorije">
-            <Input style={{ width: "10rem", marginRight: '1rem' }} />
+          <Form.Item 
+            name="nazivKategorije"
+            rules={[
+              { required: true, message: 'Unesite naziv kategorije!' },
+              { max: 30, message: 'Maksimalna dužina naziva je 30 znakova.' },
+            ]}>
+            <Input style={{ width: "20rem", marginRight: '1rem' }} />
           </Form.Item>
           <Form.Item
             label="Odabir admina:"
@@ -120,7 +130,13 @@ const CategoryBox: React.FC = () => {
             </Select>
           </Form.Item>
           </div>
-          <Form.Item name="opisKategorije">
+          <Form.Item 
+            name="opisKategorije"
+            rules={[
+              { required: true, message: 'Unesite opis kategorije!' },
+              { max: 500, message: 'Maksimalna dužina opisa je 500 znakova.' },
+            ]}
+          >
             <Input.TextArea rows={2} />
           </Form.Item>
           <Form.Item>

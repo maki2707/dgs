@@ -9,6 +9,7 @@ import AddVideogameModal from './modals/Videogame/AddVideogameModal';
 import queryClient from '../util/queryClients';
 import EditVideogameModal from './modals/Videogame/EditVideoGameModal';
 import { getVideogameColumns } from '../pages/columns/VideogameColumns';
+import useSearchVideogame from '../hooks/Videogames/useSearchVideogame';
 
 const VideogamesDetail: React.FC = () => {
   const [searchText, setSearchText] = useState<string>('');
@@ -18,7 +19,13 @@ const VideogamesDetail: React.FC = () => {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [videogameToDelete, setVideogameToDelete] = useState<Videoigra | null>(null);
   const [videogameToEdit, setVideogameToEdit] = useState<Videoigra | null>(null);
-
+  const { data: searchResults, isLoading: isSearchLoading } = useSearchVideogame(searchText);
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+    if(searchText.length > 2){
+      queryClient.invalidateQueries('videogamesDataSearch')
+    }
+  }; 
   const showDeleteModal = useCallback((videogame: Videoigra) => {
     setVideogameToDelete(videogame);
     setDeleteModalVisible(true);
@@ -40,7 +47,7 @@ const VideogamesDetail: React.FC = () => {
     showEditModal,
     showDeleteModal,
   });
-
+  const filteredVideogames = searchResults ? searchResults : data ;
   return (
     <div className='videogamesBox'>
       <div className='videogamesTable-header'>
@@ -57,7 +64,7 @@ const VideogamesDetail: React.FC = () => {
       </div>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={filteredVideogames}
         loading={isLoading}
         className='videogamesTable'
         rowClassName='videogamesTable-row'

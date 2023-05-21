@@ -8,10 +8,8 @@ const Home = () => {
     const { category, setCategory } = useContext(CategoryContext);
     return(
         <>
-        
             <CategoryBox/>
             <VideogamesDetail/>
-            <div>bok</div>
         </>
     
     )

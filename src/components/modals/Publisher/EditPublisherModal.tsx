@@ -39,7 +39,12 @@ const EditPublisherModal: React.FC<EditPublisherModalProps> = ({ visible, onConf
           toast.success('Uspješna izmjena proizvođača!');
           form.resetFields();
           onCancel();
-        }
+        }, 
+        onError: (error:any) => {
+          if (error.response?.status === 400) {
+            toast.error('Pogreška u ažuriranju: proizvođač s tim imenom već postoji!');
+          }
+        },
       });
     } catch (error) {
       console.log('Error validating form: ', error);
@@ -65,7 +70,8 @@ const EditPublisherModal: React.FC<EditPublisherModalProps> = ({ visible, onConf
         <Form.Item
           label="Naziv proizvođača"
           name="nazivProizvodac"
-          rules={[{ required: true, message: 'Molimo unesite naziv proizvođača!' }]}
+          rules={[{ required: true, message: 'Molimo unesite naziv proizvođača!' },
+          { max: 30, message: 'Naziv proizvođača ne smije biti duži od 30 znakova' }]}
         >
           <Input />
         </Form.Item>
